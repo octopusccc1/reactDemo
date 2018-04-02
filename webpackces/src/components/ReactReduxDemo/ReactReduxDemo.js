@@ -1,9 +1,11 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import {bindActionCreators} from 'redux';
+import PropTypes from 'prop-types';
 const mapStateToProps = (state,ownProps) => {
     return{
-        count:state.count
+        count:state.count,
+        themeColor:state.themeColor
     }
 }
 const mapDispatchToProps = (dispatch, ownProps) => {
@@ -13,17 +15,19 @@ const mapDispatchToProps = (dispatch, ownProps) => {
 }
 const actions = {
     increase: () => ({ type: 'INCREASE' }),
-    decrease: () => ({ type: 'DECREASE' })
+    decrease: () => ({ type: 'DECREASE' }),
+    changeColor: () => ({ type: 'CHANGE_COLOR' }),
+    
 }
 class ReactReduxDemo extends React.Component{
     render(){
-        const {count,increase,decrease} = this.props;
+        const {count,increase,decrease,changeColor,themeColor} = this.props;
         return(
             <div>
-                <div>{this.props.count}</div>
+                <div  style={{color:themeColor}}>{count}</div>
                 <button onClick={increase}>增加</button>
                 <button onClick ={decrease}>减少</button>
-                
+                <button onClick ={changeColor}>改变颜色</button>
             </div>
         )
     }
