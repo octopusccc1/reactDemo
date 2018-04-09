@@ -33,7 +33,6 @@ class modelDemo extends React.Component {
         const {propsState,collapse,collapsible} = this.state;
         const loading = propsState == propsLoadingState.LOADING
         const iconType = loading ? 'loading' : collapse ? 'right' : 'down';
-        console.log(eventChecked)
         return (
             <div onClick ={this.handleEventItemClick}>
                 <Checkbox checked={eventChecked} onClick={this.handleEventItemClick} />

@@ -3,7 +3,6 @@ const Reducers = (state = { count: 0,themeColor:'blue' }, action) => {
     const { type, payload } = action;
     switch (action.type) {
         case 'INCREASE': 
-        console.log(state)
         return { ...state,count: state.count + 1 }
         
         case 'DECREASE': 
