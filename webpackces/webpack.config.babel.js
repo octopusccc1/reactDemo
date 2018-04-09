@@ -86,5 +86,5 @@ export default {
             }
         }),
         new webpack.DefinePlugin(GLOBALS)
-    ].concat(getHtmlWebpackPlugin())
+    ]
 }

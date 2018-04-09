@@ -22,6 +22,8 @@ import './components/antDemo/index.less'
 import PriceInput from './components/antDemo/ceshi';
 
 import { Form, Input, Select, Button } from 'antd';
+import './assets/css/common/mixin.less';
+import './assets/css/lib/ant-theme-vars.less';
 const FormItem = Form.Item;
 const createForm = Form.create;
 const Option = Select.Option;
@@ -40,46 +42,74 @@ class App extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            themeColor: 'red'
+            themeColor: 'red',
+            numberFromDefault:0,
+            numberToDefault:0,
+            isUpdate:false
         }
+        
     }
     getChildContext() {
         return {
             themeColor: this.state.themeColor
         }
     }
-
-    onChange() {
-
-    }
     checkItems = (rule, value, callback) => {
-        if (!value.number1 || !value.number2 || value.number1 === '0' || value.number2 === '0') {
+       
+        if (!value.numberFrom || !value.numberTo || value.numberFrom === '0' || value.numberTo === '0') {
             callback('请输入正确的区间值，如1-50');
         } else {
             callback()
         }
     };
+    handleChange = () => {
+        setTimeout(this.checkChange.bind(this),0)
+    }
+    checkChange = () => {
+        let values;
+        const { form } = this.props;
+        const formData = form.getFieldsValue()
+       
+        let difValue = formData.price.numberFrom - formData.price.numberTo < 0 ? false : true;
+        if (difValue) {
+            let saveBig = formData.price.numberFrom;
+            formData.price.numberFrom = formData.price.numberTo;
+            formData.price.numberTo = saveBig;
+        };
+        values = [formData.price.numberFrom, formData.price.numberTo]
+        const obj = {
+            values
+        }
+      
+    }
     handleSubmit = (e) => {
+        const obj = this.checkChange()
         e.preventDefault();
         this.props.form.validateFields((err, values) => {
             if (!err) {
-                console.log('Received values of form: ', values);
+                // const obj = this.checkChange();
+                // const { onChange } = this.props;
+                // onChange && onChange(obj);
+                this.returnAfter(values)
             }
         });
     }
-    checkPrice = (rule, value, callback) => {
-        console.log(value)
-        if (value.number > 0) {
-            callback();
-            return;
-        }
-        callback('Price must greater than zero!');
+    returnAfter = (values)=>{
+        let {numberFrom,numberTo} = values.price;
+        this.setState({
+            numberFromDefault:numberFrom,
+            numberToDefault:numberTo,
+            isUpdate:true
+        },()=>{
+            this.setState({
+                isUpdate:false
+            })
+        })
     }
     render() {
         const { form } = this.props;
+        const {numberFromDefault,numberToDefault} = this.state;
         const { getFieldDecorator } = form;
-
-
         return (
             <div>
                 {/* <ContextDemo />
@@ -107,16 +137,14 @@ class App extends React.Component {
                     <Button type="primary"  htmlType="submit">点我</Button>
                     </FormItem>
                 </Form> */}
-                <Form layout="inline" onSubmit={this.handleSubmit}>
+                <Form layout="inline">
                     <FormItem label="Price">
                         {getFieldDecorator('price', {
-                            initialValue: { number1: '', number2: ''},
+                            initialValue: { numberFrom: numberFromDefault, numberTo: numberToDefault },
                             rules: [{ validator: this.checkItems }],
-                        })(<PriceInput />)}
+                        })(<InputGroup dunk={this.state}/>)}
                     </FormItem>
-                    <FormItem>
-                        <Button type="primary" htmlType="submit">Submit</Button>
-                    </FormItem>
+                    <Button type="primary" onClick={this.handleSubmit}>确定</Button>
                 </Form>
             </div>
         )
